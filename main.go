@@ -22,6 +22,19 @@ type Person struct{
 
 var client *mongo.Client
 
+func DeletePersonEndpointByLastname(response http.ResponseWriter, request *http.Request){
+	response.Header().Add("content-type", "application/json")
+	params := mux.Vars(request)
+	collection := client.Database("thepolyglotdeveloper").Collection("people")
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	result, err := collection.DeleteOne(ctx, bson.M{"lastname" : params["lastname"]})
+	if err != nil{
+		fmt.Printf("remove failed %v\n", err)
+		return
+	}
+	json.NewEncoder(response).Encode(result)
+}
+
 func CreatePersonEndpoint(response http.ResponseWriter, request *http.Request){
 	response.Header().Add("content-type", "application/json")
 	var person Person
@@ -95,10 +108,10 @@ func main(){
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, _ = mongo.Connect(ctx, clientOptions)
 	router := mux.NewRouter()
-	_ = client
 	router.HandleFunc("/person", CreatePersonEndpoint).Methods("POST")
 	router.HandleFunc("/person", GetPersonEndpoint).Methods("GET")
 	router.HandleFunc("/person/id/{id}", GetPersonEndpointByID).Methods("GET")
 	router.HandleFunc("/person/lastname/{lastname}", GetPersonEndpointByLastname).Methods("GET")
+	router.HandleFunc("/person/lastname/{lastname}", DeletePersonEndpointByLastname).Methods("DELETE")
 	http.ListenAndServe(":12345", router)
 }
