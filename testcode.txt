@@ -2,3 +2,7 @@ curl -X POST -d '{"firstname":"Hua","lastname":"Fu"}' -H 'Content-Type: applicat
 curl -X GET http://localhost:12345/person/id/{id} | python -m json.tool
 curl -X GET http://localhost:12345/person/lastname/Fu | python -m json.tool
 
+go get github.com/gorilla
+go get github.com/gorilla/mux
+go get go.mongodb.org/mongo-driver/bson
+go get go.mongodb.org/mongo-driver/mongo
