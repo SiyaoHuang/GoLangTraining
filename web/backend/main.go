@@ -23,6 +23,7 @@ func reader(conn *websocket.Conn){
 			return
 		}
 		fmt.Println(string(p))
+		p  = []byte(`"`+ string(p) + `"` + " is recieved")
 		if err := conn.WriteMessage(messageType, p); err != nil{
 			log.Println(err)
 			return
@@ -49,6 +50,9 @@ func setupRoutes(){
 func main(){
 	fmt.Println("Chat App v0.01")
 	setupRoutes()
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil{
+		log.Println("err",err)
+	}
 	// fmt.Println()
 }
