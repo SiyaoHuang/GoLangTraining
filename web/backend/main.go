@@ -1,35 +1,11 @@
 package main
 
-import (
+import(
 	"fmt"
-	// "io"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
+	// "backend/pkg/websocket"
 )
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize: 1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func (r *http.Request) bool {return true},
-}
-
-func reader(conn *websocket.Conn){
-	for{
-		messageType, p, err := conn.ReadMessage()
-		if err != nil{
-			log.Println(err)
-			return
-		}
-		fmt.Println(string(p))
-		p  = []byte(`"`+ string(p) + `"` + " is recieved")
-		if err := conn.WriteMessage(messageType, p); err != nil{
-			log.Println(err)
-			return
-		}
-	}
-}
 
 func serverWs(w http.ResponseWriter, r *http.Request){
 	fmt.Println(r.Host)
@@ -37,7 +13,8 @@ func serverWs(w http.ResponseWriter, r *http.Request){
 	if err != nil{
 		log.Println(ws)
 	}
-	reader(ws)
+	go websocket.writer(ws)
+	websocket.reader(ws)
 }
 
 func setupRoutes(){

@@ -31,8 +31,8 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-        <ChatHistory chatHistory={this.state.chatHistory} />
         <button onClick={this.send}>Hit</button>
+        <ChatHistory chatHistory={this.state.chatHistory} />
       </div>
     );
   }
