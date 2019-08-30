@@ -1,7 +1,7 @@
 // api/index.js
 
-var ip = location.hostname
-var socket = new WebSocket(`ws://${ip}:8080/ws`);
+// var ip = location.hostname
+var socket = new WebSocket(`ws://localhost:8080/ws`);
 
 let connect = cb => {
   console.log("Attempting Connection...");
