@@ -4,24 +4,30 @@ import(
 	"fmt"
 	"net/http"
 
-	// "backend/pkg/websocket"
+	"github.com/SiyaoHuang/GoLangTraining/web/backend/pkg/websocket"
 )
 
-func serverWs(w http.ResponseWriter, r *http.Request){
+func serverWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request){
 	fmt.Println(r.Host)
-	ws, err := upgrader.Upgrade(w, r, nil)
+	ws, err := websocket.Upgrade(w, r)
 	if err != nil{
-		log.Println(ws)
+		fmt.Println(ws)
 	}
-	go websocket.writer(ws)
-	websocket.reader(ws)
+	client := &websocket.Client{
+		Conn : ws,
+		Pool : pool,
+	}
+	pool.Register <- client
+	client.Read()
 }
 
 func setupRoutes(){
 	http.HandleFunc("/", func(w http.ResponseWriter, r * http.Request){
 		fmt.Fprintf(w, "Simple Server\n")
 	})
-	http.HandleFunc("/ws", serverWs)
+	pool := websocket.NewPool()
+	go pool.Start()
+	http.HandleFunc("/ws", func (w http.ResponseWriter, r *http.Request){serverWs(pool, w, r)})
 }
 
 func main(){
@@ -29,7 +35,6 @@ func main(){
 	setupRoutes()
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil{
-		log.Println("err",err)
+		fmt.Println("err",err)
 	}
-	// fmt.Println()
 }
