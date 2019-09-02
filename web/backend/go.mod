@@ -1,4 +1,4 @@
-module github.com/TutorialEdge/realtime-chat-go-react
+module github.com/SiyaoHuang/GoLangTraining
 
 go 1.12
 
